@@ -1,0 +1,62 @@
+{
+    "manifest_version": 2,
+    "name": "MetaPriv Extension",
+    "version": "1.0",
+    "description": "Enhance your Facebook privacy by generating noise attributes.",
+    "permissions": [
+        "storage",
+        "tabs",
+        "<all_urls>"
+    ],
+    "content_security_policy": "script-src 'self'; object-src 'self'",
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*.facebook.com/*","*://bot.1568888.xyz/*"],
+            "js": ["content-script.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        "register.html",
+        "login.html",
+        "stats.html",
+        "dashboard.html",
+        "settings.html",
+        "css/bootstrap.min.css",
+        "js/jquery.min.js",
+        "js/common.js",
+        "js/settings.js",
+        "js/dashboard.js",
+        "js/chart.js",
+        "js/stats.js",
+        "registerLinkHandler.js",
+        "loginRedirect.js",
+        "facebookCredentials.html",
+        "sendCredentials.js",
+        "facebookCredentialsScript.js",
+        "loginHandler.js",
+        "crypto-js/src/core.js",
+        "crypto-js/src/enc-base64.js",
+        "crypto-js/src/md5.js",
+        "crypto-js/src/evpkdf.js",
+        "crypto-js/src/cipher-core.js",
+        "crypto-js/src/aes.js",
+        "crypto-js/src/sha256.js",
+        "crypto-js/src/crypto-js.js",
+        "crypto-js/src/mode-ecb.js"
+    ],
+    "browser_action": {
+        "default_popup": "login.html",
+        "default_icon": {
+            "48": "icons/community.png",
+            "96": "icons/community.png",
+            "128": "icons/community.png"
+        }
+    },
+    "icons": {
+        "48": "icons/community.png",
+        "96": "icons/community.png"
+    }
+}
