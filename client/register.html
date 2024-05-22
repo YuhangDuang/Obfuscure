@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaPriv Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            margin: auto;
+            width: 300px;
+            padding: 20px;
+        }
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <form id="registerForm">
+            <label for="username"><b>Username</b></label>
+            <input type="text" placeholder="Please enter your username" name="username" required>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Please enter your password" name="psw" required>
+
+            <label for="psw-repeat"><b>Repeat password</b></label>
+            <input type="password" placeholder="Please repeat your password" name="psw-repeat" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <p>Already have an account? <a href="#" id="loginLink">Login</a></p>
+
+    <script src="crypto-js/src/core.js"></script>
+    <script src="crypto-js/src/enc-base64.js"></script>
+    <script src="crypto-js/src/md5.js"></script>
+    <script src="crypto-js/src/evpkdf.js"></script>
+    <script src="crypto-js/src/cipher-core.js"></script>
+    <script src="crypto-js/src/aes.js"></script>
+    <script src="crypto-js/src/sha256.js"></script>
+    <script src="crypto-js/src/crypto-js.js"></script>
+    <script src="loginRedirect.js"></script>
+    
+</body>
+</html>
