@@ -30,7 +30,7 @@ On Windows:
 2. Download and install XAMPP from the official website, then open "XAMPP Control Panel" and click the start buttons of "Apache" and "MySQL".
 3. Under the "xampp" folder, replace the contents of the "htdocs" folder with the ones of the "server" folder.
 4. Open a random browser and input "http://localhost/phpmyadmin", then create a database namely "metapriv_db".
-5. Imported tables for metapriv_db.
+5. Import tables for metapriv_db.
 6. Set up "venv" virtual environment: cd path\to\your\project, .\venv\Scripts\activate
 7. Install requirements.txt: pip install -r requirements.txt
 8. Open Command Prompt and input: cd C:\xampp\htdocs, C:\\xampp\htdocs\\myvenv\\Scripts\\python.exe C:\\xampp\\htdocs\\linux\\stats.py
