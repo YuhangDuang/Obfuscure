@@ -4,7 +4,7 @@ An upgraded version of MetaPriv is now available as a Firefox extension, enablin
 
 # How to use?
 
-# Client side:
+**Client side:**
 
 1. Download the "client" folder.
 2. Open Firefox and input "about:debugging" into the search bar.
@@ -22,7 +22,7 @@ On next runs:
 2. Set up the desired privacy level and the seed keyword, then click "Save Keywords" to save these settings.
 3. Click "Login Facebook" to start the process.
 
-# Server side:
+**Server side:**
 
 On Windows:
 
