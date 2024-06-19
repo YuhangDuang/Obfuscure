@@ -4,6 +4,12 @@ import time
 
 import mysql.connector
 
+DATABASE_CONFIG = {  
+    'host': 'localhost',  
+    'user': 'root',  
+    'password': '',  
+    'database': 'metapriv_db'  
+}
 
 class Keyword:
     def __init__(self):
@@ -70,7 +76,7 @@ def getKeyword():
         liked_posts = 0
         liked_pages = 0
         ID, word,_ = keyword
-        words[word] = Keyword()  ###
+        words[word] = Keyword()
         conn = sqlite3.connect('userdata/pages.db')
         c = conn.cursor()
         c.execute('SELECT URL FROM pages WHERE categID IS ' + str(ID))
@@ -131,20 +137,15 @@ def getKeyword():
             pass
     return watched_videos_list
 
-
-# print(words)
-# print("Liked Posts: " + str(liked_posts_list) + " | Liked Pages: " + str(liked_pages_list))
-# print("Watched Videos: " + str(watched_videos_list) + " | Liked Videos: " + str(liked_videos_list))
 def update_data(stats_data, keywords):
     # Create connection with database
     db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="metapriv_db"
+        host=DATABASE_CONFIG['host'],  
+        user=DATABASE_CONFIG['user'],  
+        password=DATABASE_CONFIG['password'],  
+        database=DATABASE_CONFIG['database']  
     )
     db_cursor = db.cursor()
-    # db_cursor.execute("INSERT INTO stats (stats_data,keywords) VALUES (%s) ON DUPLICATE KEY UPDATE stats_data=VALUES(stats_data), keywords=VALUES(keywords)", (stats_data,keywords))
     db_cursor.execute("UPDATE stats SET stats_data=%s, keywords=%s WHERE id=1", (stats_data, keywords))
     db.commit()
     db_cursor.close()
@@ -153,13 +154,10 @@ def update_data(stats_data, keywords):
 
 def create_data():
     original_list = getKeyword()
-    # original_list = ['hello', 37, 7, 0, 0, 'cat', 2, 8, 0, 0, 'phone', 0, 1, 0, 0]
-
     # Get the index of a string element
     string_indices = [index for index, element in enumerate(original_list) if isinstance(element, str)]
     # Extract string elements
     string_elements = [original_list[index] for index in string_indices]
-
     # Extract numeric elements
     numeric_elements = [original_list[i:i + 4] for i in range(1, len(original_list), 5)]
     update_data(stats_data=str(numeric_elements), keywords=str(string_elements).replace("'", "\""))
@@ -170,16 +168,15 @@ def create_data():
 def new_update_data(stats_data,keywords,user_id):
 	# Connect database
 	db = mysql.connector.connect(
-		host="localhost",
-		user="root",
-		password="",
-		database="metapriv_db"
+        host=DATABASE_CONFIG['host'],  
+        user=DATABASE_CONFIG['user'],  
+        password=DATABASE_CONFIG['password'],  
+        database=DATABASE_CONFIG['database'] 
 	)
 	db_cursor = db.cursor()
 	db_cursor.execute(
 		"INSERT INTO stats (stats_data, keywords, user_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE stats_data=VALUES(stats_data), keywords=VALUES(keywords)",
 		(stats_data, keywords, user_id))
-	#db_cursor.execute("INSERT INTO stats (stats_data,keywords,user_id) VALUES (%s,%s,%d) ON DUPLICATE KEY UPDATE stats_data=VALUES(stats_data), keywords=VALUES(keywords)", (stats_data,keywords,user_id))
 	db.commit()
 	db_cursor.close()
 	db.close()
@@ -219,12 +216,62 @@ def write_db():
 			temp_data.append(result[word])
 		generated_data[key] = temp_data
 
-	# print(generated_data)
-	# print(result)
-	# print(user_word)
 	for key, value in generated_data.items():
-		# print(user_word[key])
 		new_update_data(stats_data=str(value), keywords=str(user_word[key]).replace("'", "\""), user_id=key)
+
+def filter_data():
+    return_list = []
+    # Connect with database
+    conn = sqlite3.connect('userdata/pages.db')  
+    c = conn.cursor()  
+
+    userids = []
+    c.execute('SELECT distinct user_id FROM categories')  
+    userid_data = c.fetchall()  
+    for (userid,) in userid_data:  
+        urls=[]
+        keywords = '' 
+        return_str = ""
+        # Search and decrypt keyword  
+        c.execute('SELECT ID,category FROM categories where user_id=%d' % userid)  
+        keywords_encr = c.fetchall()  
+        for (ID,encrkwrd,) in keywords_encr:  
+             # Search and decrypt URLs  
+            c.execute('SELECT URL FROM pages WHERE categID IS ' + str(ID))
+            urls_encr = c.fetchall()  
+            for (encrurl,) in urls_encr:  
+                urls.append(encrurl)
+
+            keywords += encrkwrd + ';' 
+        keywords = keywords[:-1]  
+
+        # Print results  
+        for url in urls:  
+            return_str += url + '\n'  
+        return_str += '||\n' + keywords
+
+        return_list.append({"user_id":userid,"fitter_data":return_str})
+    conn.close() 
+    return return_list
+    
+def insert_fitter_data():
+    db = mysql.connector.connect(
+        host=DATABASE_CONFIG['host'],  
+        user=DATABASE_CONFIG['user'],  
+        password=DATABASE_CONFIG['password'],  
+        database=DATABASE_CONFIG['database'] 
+        )
+    db_cursor = db.cursor()
+    for fitter_datas in  filter_data():
+        user_id = fitter_datas["user_id"]
+        fitter_data= fitter_datas["fitter_data"]
+        db_cursor.execute(
+            "INSERT INTO fitter_data (fitter_data, user_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE fitter_data=VALUES(fitter_data)",
+                (fitter_data, user_id)
+        )
+    db.commit()
+    db_cursor.close()
+    db.close()
 
 if __name__ == '__main__':
     # Specify task execution time
@@ -234,5 +281,39 @@ if __name__ == '__main__':
     else:
         while True:
             write_db()
+            insert_fitter_data()
             time.sleep(interval)
             print("Successful implementation!")
+
+    return_str = ""
+    try:  
+        conn = sqlite3.connect('userdata/pages.db')  
+        c = conn.cursor()  
+  
+        # Search and decrypt URLs  
+        c.execute('SELECT URL FROM pages')  
+        urls_encr = c.fetchall()  
+        urls = []  
+        for (encrurl,) in urls_encr:  
+            urls.append(encrurl)
+  
+        # Search and decrypt keyword  
+        c.execute('SELECT category FROM categories')  
+        keywords_encr = c.fetchall()  
+        keywords = ''  
+        for (encrkwrd,) in keywords_encr:  
+            keywords += encrkwrd + ';'
+        keywords = keywords[:-1]  
+  
+        # Print results
+        for url in urls:  
+            return_str += url + '\n'  
+        return_str += '||\n' + keywords
+        print('return_str:', return_str)  
+  
+    except sqlite3.OperationalError:  
+        print('Nothing yet. Add some noise first.')  
+  
+    finally:  
+        if conn:  
+            conn.close() 
