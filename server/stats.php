@@ -18,3 +18,18 @@ if($mod == 'get'){
         }
     }
 }
+if($mod == 'filter'){
+    $user_id = $_POST['user_id'];
+    $stmt = $conn->prepare("SELECT fitter_data FROM fitter_data WHERE user_id = ?");
+    $stmt->bind_param("s", $user_id);
+    if ($stmt) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            echo json_encode(["status" => 1, "data" => $row]);
+        } else {
+            echo json_encode(["status" => 0,"data" => ""]);
+        }
+    }
+}
