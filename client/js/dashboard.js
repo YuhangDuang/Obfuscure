@@ -1,6 +1,9 @@
 $("#stats").click(function() {
     window.location.href = "stats.html";
 });
+$("#popup").click(function() {
+    window.location.href = "popup.html";
+});
 $("#logout_facebook").click(function() {
     var params = {
         user_id: localStorage.getItem('userId')
