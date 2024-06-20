@@ -50,6 +50,9 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             localStorage.setItem('key', CryptoJS.SHA256(pin).toString()); 
             localStorage.setItem('hashedPassword', hashedPassword1); 
             localStorage.setItem('userId', data.userId); 
+            browser.storage.local.set({userId: data.userId}).catch(err => {
+                console.error('Error setting storage userId:', err);
+            });
             window.location.href = "settings.html";
         } else {
             console.error('Authentication failed:', data.message);
@@ -126,8 +129,3 @@ function decryptFBCredentials(encryptedCredentials, key) {
         return { email: "", password: "" };
     }
 }
-
-
-
-
-
